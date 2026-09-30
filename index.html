@@ -1,0 +1,221 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CrossCheck — Numeric Claim Consistency Verifier</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+
+<a class="skip-link" href="#main">Skip to main content</a>
+
+<div class="tricolor-bar" aria-hidden="true"></div>
+
+<div class="util-bar">
+  <div class="util-bar-inner">
+    <span class="util-bar-crumb">CrossCheck <span aria-hidden="true">&rsaquo;</span> Statistics &amp; Verification <span aria-hidden="true">&rsaquo;</span> <strong>Consistency Verifier</strong></span>
+    <div class="util-bar-right" aria-label="Accessibility controls">
+      <div class="util-lang" role="group" aria-label="Language switcher">
+        <button class="lang-toggle active" type="button" data-lang="en" aria-pressed="true">EN</button>
+        <button class="lang-toggle" type="button" data-lang="hi" aria-pressed="false"><span lang="hi">हिंदी</span></button>
+      </div>
+      <div class="util-size" role="group" aria-label="Text size controls">
+        <button class="font-size-btn" type="button" data-action="decrease" aria-label="Decrease font size">A-</button>
+        <button class="font-size-btn is-reset active" type="button" data-action="reset" aria-label="Reset font size">A</button>
+        <button class="font-size-btn" type="button" data-action="increase" aria-label="Increase font size">A+</button>
+      </div>
+      <label class="font-family-picker" aria-label="Font family selector">
+        <span class="sr-only">Font family</span>
+        <select id="fontFamilySelect">
+          <option value="sans">Sans</option>
+          <option value="serif">Serif</option>
+          <option value="hindi">Hindi</option>
+        </select>
+      </label>
+    </div>
+  </div>
+</div>
+
+<header class="masthead">
+  <div class="masthead-inner">
+    <div class="seal">CC</div>
+    <div class="masthead-copy">
+      <div class="kicker" data-i18n="kicker">Numeric Claim Consistency &amp; Cross-Document Audit Portal</div>
+      <h1>CrossCheck<span class="hindi-sub" lang="hi">&nbsp;&mdash;&nbsp;क्रॉसचेक</span></h1>
+      <p class="subtitle" data-i18n="subtitle">Compares official Parliament replies, budget documents and dashboards for the same scheme and year, and flags where the reported numbers disagree.</p>
+    </div>
+    <div class="masthead-status">
+      <span class="status-pill" id="statusPill">33 SCHEMES INDEXED</span>
+      <span class="status-meta" data-i18n="local">Runs entirely in your browser &middot; no data leaves this page</span>
+    </div>
+  </div>
+</header>
+
+<div class="app-shell">
+
+  <aside class="sidebar" aria-label="Scheme directory">
+    <div class="sidebar-head">
+      <span class="field-label" data-i18n="dir">Scheme Directory</span>
+      <input type="search" id="schemeFilter" class="sidebar-search" placeholder="Filter by scheme or ministry…" data-i18n-ph="filter" aria-label="Filter schemes">
+    </div>
+    <nav id="schemeNav" class="scheme-nav"></nav>
+  </aside>
+
+  <main id="main" class="main-content">
+
+    <div class="tab-bar" role="tablist">
+      <button class="tab-btn active" role="tab" data-tab="verify" data-i18n="tabVerify">Verify Documents</button>
+      <button class="tab-btn" role="tab" data-tab="ask" data-i18n="tabAsk">Ask the Graph</button>
+      <button class="tab-btn" role="tab" data-tab="explore" data-i18n="tabExplore">Ministry &amp; Location Explorer</button>
+    </div>
+
+    <div class="tab-panel active" id="tab-verify">
+
+    <div class="control-card">
+      <div class="control-row">
+        <div class="control-meta">
+          <span class="field-label" data-i18n="selected">Selected scheme</span>
+          <div class="control-scheme-name" id="controlSchemeName">&nbsp;</div>
+          <div class="control-scheme-ministry" id="controlSchemeMinistry">&nbsp;</div>
+        </div>
+        <div class="tolerance-field">
+          <span class="field-label" data-i18n="tolerance">Match tolerance</span>
+          <input type="range" id="toleranceSlider" min="0" max="5" step="0.5" value="1">
+          <span class="tolerance-value" id="toleranceValue">1.0% difference allowed</span>
+        </div>
+        <button class="run-btn" id="runBtn" data-i18n="run">Run CrossCheck</button>
+      </div>
+    </div>
+
+    <div class="doc-grid">
+      <section class="doc-card" data-doc="A">
+        <div class="doc-card-head">
+          <div>
+            <h2 id="docATitle">Document A</h2>
+            <div class="src" id="docASource">&nbsp;</div>
+          </div>
+          <div class="view-toggle" data-doc="A">
+            <button class="active" data-view="edit" data-i18n="edit">Edit</button>
+            <button data-view="read" data-i18n="highlighted">Highlighted</button>
+          </div>
+        </div>
+        <div class="doc-body">
+          <textarea class="doc-input" id="docAInput"></textarea>
+          <div class="doc-read" id="docARead" style="display:none;"></div>
+        </div>
+      </section>
+
+      <section class="doc-card" data-doc="B">
+        <div class="doc-card-head">
+          <div>
+            <h2 id="docBTitle">Document B</h2>
+            <div class="src" id="docBSource">&nbsp;</div>
+          </div>
+          <div class="view-toggle" data-doc="B">
+            <button class="active" data-view="edit" data-i18n="edit">Edit</button>
+            <button data-view="read" data-i18n="highlighted">Highlighted</button>
+          </div>
+        </div>
+        <div class="doc-body">
+          <textarea class="doc-input" id="docBInput"></textarea>
+          <div class="doc-read" id="docBRead" style="display:none;"></div>
+        </div>
+      </section>
+    </div>
+
+    <div class="summary-row" id="summaryRow"></div>
+
+    <div class="results-card">
+      <div class="results-head">
+        <h2 data-i18n="verdicts">Claim-by-claim Verdict</h2>
+        <div class="results-head-actions">
+          <div class="view-toggle" id="resultsViewToggle">
+            <button class="active" data-view="table" data-i18n="table">Table</button>
+            <button data-view="grid" data-i18n="grid">Grid</button>
+          </div>
+          <button class="export-btn" id="exportBtn" data-i18n="export">Export Report (.txt)</button>
+        </div>
+      </div>
+      <div id="resultsBody"></div>
+    </div>
+
+    <section class="sources-card">
+      <div class="sources-head">
+        <span class="badge-inline">Verified Sources</span>
+        <h2 data-i18n="sourcesHead">Where to find the real documents</h2>
+        <p>These are the actual Government of India portals where documents of this kind are published. Open one,
+        copy the relevant reply or budget text, and paste it into the <strong>Custom</strong> entry in the directory
+        to run CrossCheck on the real thing.</p>
+      </div>
+      <div class="sources-grid">
+        <div>
+          <div class="sources-subhead" id="schemeSourcesLabel">Relevant to this scheme</div>
+          <ul class="source-list" id="schemeSources"></ul>
+        </div>
+        <div>
+          <div class="sources-subhead">Full source directory</div>
+          <ul class="source-list" id="allSources"></ul>
+        </div>
+      </div>
+    </section>
+    </div>
+
+    <div class="tab-panel" id="tab-ask">
+      <div class="control-card">
+        <h2 class="panel-title" data-i18n="askTitle">Ask a multi-hop question</h2>
+        <p class="panel-sub" data-i18n="askSub">GraphRAG links entities across all indexed documents into a knowledge graph, seeds the search with vector similarity, then walks the graph hop by hop (ministry &rarr; scheme &rarr; document &rarr; claim &rarr; conflict, scheme &rarr; state) to answer questions no single document can.</p>
+        <div class="ask-row">
+          <input type="search" id="askInput" class="ask-input" placeholder="Ask about ministries, schemes, states, funds or disagreements…" data-i18n-ph="askPh" aria-label="Question">
+          <button class="run-btn" id="askBtn" data-i18n="askBtn">Ask the graph</button>
+        </div>
+        <div class="chip-row" id="askChips"></div>
+        <div class="graph-stats" id="graphStats"></div>
+      </div>
+      <div id="askOutput"></div>
+    </div>
+
+    <div class="tab-panel" id="tab-explore">
+      <div class="control-card">
+        <div class="explore-controls">
+          <label><span class="field-label" data-i18n="ministry">Ministry</span><select id="exMinistry"></select></label>
+          <label><span class="field-label" data-i18n="scheme">Scheme</span><select id="exScheme"></select></label>
+          <label><span class="field-label" data-i18n="state">State / UT</span><select id="exState"></select></label>
+        </div>
+        <div class="place-search">
+          <input type="search" id="exPlace" list="placeList" class="ask-input" placeholder="Search a city or state, e.g. Pune, Guwahati, Kerala…" data-i18n-ph="placePh" aria-label="Search a place">
+          <datalist id="placeList"></datalist>
+          <button class="run-btn" id="exGo" data-i18n="search">Search</button>
+          <button class="ghost-btn" id="exLocate" data-i18n="locate">Use my location</button>
+          <button class="ghost-btn" id="exReset" data-i18n="reset">Reset</button>
+        </div>
+        <div class="ex-msg" id="exMsg" role="status" aria-live="polite"></div>
+      </div>
+      <div class="summary-row" id="exKpis"></div>
+      <div class="ex-grid">
+        <div class="results-card"><div class="results-head"><h2 data-i18n="mapTitle">Allocation map</h2></div><div id="exMap" class="tile-map"></div><div class="map-legend" id="exLegend"></div></div>
+        <div class="results-card"><div class="results-head"><h2 id="exTableTitle"></h2></div><div id="exTable"></div></div>
+      </div>
+    </div>
+
+  </main>
+</div>
+
+<div class="drawer-overlay" id="drawerOverlay">
+  <aside class="drawer" id="claimDrawer">
+    <button class="drawer-close" id="drawerClose" aria-label="Close">&times;</button>
+    <div id="drawerBody"></div>
+  </aside>
+</div>
+
+<script src="js/document-store.js"></script>
+<script src="js/sample-data.js"></script>
+<script src="js/extraction.js"></script>
+<script src="js/matching.js"></script>
+<script src="js/allocations.js"></script>
+<script src="js/graph.js"></script>
+<script src="js/i18n.js"></script>
+<script src="js/app.js"></script>
+<script src="js/panels.js"></script>
+</body>
+</html>
